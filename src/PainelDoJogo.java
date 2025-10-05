@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -11,7 +12,9 @@ public class PainelDoJogo extends JPanel implements ActionListener {
     private static final int numColunas = 30;
     private static final int numLinhas = 30;
 
-    private static final int intervalo = 100;
+    private static int intervalo = 100;
+    private int contadorCobraComeu = 1;
+    private int nivel = 1;
 
     private LinkedList<Point> cobra;
     private Point comida;
@@ -26,6 +29,12 @@ public class PainelDoJogo extends JPanel implements ActionListener {
 
     private int pontuacao = 0;
 
+    private ArrayList<Color> corDaCobraComida = new ArrayList<>();
+    private Color corAleatoria;
+
+    private Ia ia;
+    private boolean modoIA = false;
+
     public PainelDoJogo(){
 
         setPreferredSize(new Dimension(numLinhas * tamanhoCelula, numColunas * tamanhoCelula));
@@ -34,7 +43,9 @@ public class PainelDoJogo extends JPanel implements ActionListener {
         setFocusable(true);
         addKeyListener(new TecladoAdapter(this));
 
-       // iniciarJogo();
+       corAleatoria = gerarCorAleatoria();
+       corDaCobraComida.add(corAleatoria);
+
 
     }
 
@@ -53,6 +64,13 @@ public class PainelDoJogo extends JPanel implements ActionListener {
         if (temporizadr != null) temporizadr.stop();
         temporizadr = new Timer(intervalo, this);
         temporizadr.start();
+
+        if (modoIA) {
+            ia = new Ia(cobra.getFirst(), new Point(comida.x, comida.y), this, cobra);
+        } else {
+            ia = null;
+        }
+
     }
 
 
@@ -67,10 +85,16 @@ public class PainelDoJogo extends JPanel implements ActionListener {
         } while (cobra.contains(posicao));
 
         comida = posicao;
+        corAleatoria = gerarCorAleatoria();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        //IA
+        if (ia != null) {
+            ia.atualizarEstado(cobra.getFirst(), new Point(comida.x, comida.y), cobra);
+            ia.moverIa();
+        }
 
 
         if (jogoAtivo){
@@ -78,6 +102,7 @@ public class PainelDoJogo extends JPanel implements ActionListener {
             checarColisao();
             if (cobraComeu){
                 pontuacao++;
+                corDaCobraComida.add(corAleatoria);
                 criarComida();
             }
         }
@@ -100,6 +125,10 @@ public class PainelDoJogo extends JPanel implements ActionListener {
 
         if (cabeca.equals(comida)){
             cobraComeu = true;
+            corDaCobraComida.add(1, corAleatoria);
+
+            alterarDificuldade();
+
         } else {
             cobraComeu = false;
             cobra.removeLast();
@@ -132,26 +161,25 @@ public class PainelDoJogo extends JPanel implements ActionListener {
 
         //grafico da comida
         if (jogoAtivo){
-            grafico.setColor(Color.RED);
+            grafico.setColor(corAleatoria);
             grafico.fillRect(comida.x * tamanhoCelula, comida.y * tamanhoCelula, tamanhoCelula, tamanhoCelula);
 
 
             //grafico cobra
             for (int i = 0; i < cobra.size(); i++){
                 Point posicao = cobra.get(i);
+                Color cor = corDaCobraComida.get(i);
 
-                grafico.setColor(i == 0? Color.GREEN : Color.WHITE);
+                grafico.setColor(i == 0? Color.GREEN : cor);
                 grafico.fillRect(posicao.x * tamanhoCelula, posicao.y * tamanhoCelula, tamanhoCelula, tamanhoCelula);
             }
 
 
             //exibir pontos
             grafico.setColor(Color.WHITE);
-            grafico.setFont(new Font("Arial", Font.BOLD, 15));
-            grafico.drawString("Pontuação: " + pontuacao, 5, 18);
+            grafico.setFont(new Font("Comic Sans MS", Font.PLAIN, 15));
+            grafico.drawString("Nível: " + nivel + " / " + " Pontuação: " + pontuacao, 5, 18);
 
-        } else if (cobra == null || cobra.isEmpty()){
-            telaInicial(grafico);
         } else {
             gameOver(grafico);
         }
@@ -161,7 +189,10 @@ public class PainelDoJogo extends JPanel implements ActionListener {
 
     public void gameOver(Graphics grafico){
 
-        grafico.setFont(new Font("Arial", Font.BOLD, 40));
+        intervalo = 100;
+        nivel = 1;
+
+        grafico.setFont(new Font("Comic Sans MS", Font.BOLD, 40));
 
         FontMetrics medidas = grafico.getFontMetrics();
         int x = (getWidth() - medidas.stringWidth("SE FODEU!")) / 2;
@@ -176,34 +207,39 @@ public class PainelDoJogo extends JPanel implements ActionListener {
 
         grafico.setColor(Color.WHITE);
 
-        grafico.setFont(new Font("Arial", Font.PLAIN, 20));
-        int scoreX = (getWidth() - grafico.getFontMetrics().stringWidth("Pontuação: " + pontuacao)) / 2;
-        grafico.drawString("Pontuação: " + pontuacao, scoreX, y + 30);
+        grafico.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
+        int posicao = (getWidth() - grafico.getFontMetrics().stringWidth("Pontuação: " + pontuacao)) / 2;
+        grafico.drawString("Pontuação: " + pontuacao, posicao, y + 30);
 
     }
 
-    public void telaInicial(Graphics grafico){
+    public static Color gerarCorAleatoria(){
+        Random aleatorio = new Random();
+        int R = aleatorio.nextInt(256);
+        int G = aleatorio.nextInt(256);
+        int B = aleatorio.nextInt(256);
 
-        grafico.setFont(new Font("Arial", Font.BOLD, 40));
 
-        FontMetrics medidas = grafico.getFontMetrics();
-        int x = (getWidth() - medidas.stringWidth("APERTE ENTER!")) / 2;
-        int y = getHeight() / 2;
-
-        grafico.setColor(Color.WHITE);
-        grafico.drawString("APERTE ENTER", x + 2, y + 2);
-
-        grafico.setColor(Color.RED);
-        grafico.drawString("APERTE ENTER", x, y);
-
-        grafico.setColor(Color.WHITE);
-        grafico.setFont(new Font("Arial", Font.PLAIN, 20));
-
-        int scoreX = (getWidth() - grafico.getFontMetrics().stringWidth("PARA INICIAR O JOGO")) / 2;
-        grafico.drawString("PARA INICIAR O JOGO", scoreX, y + 30);
-
+        return new Color(G, R, B);
     }
 
+    public void alterarDificuldade(){
+
+        //a cada 5 comida a variavel zera
+        if (contadorCobraComeu == 5){
+
+            contadorCobraComeu = 0;
+            intervalo = intervalo - 10;
+            if (temporizadr != null) temporizadr.stop();
+            temporizadr = new Timer(intervalo, this);
+            temporizadr.start();
+            nivel++;
+
+        } else {
+            contadorCobraComeu++;
+        }
+
+    }
 
     public char obterDirecao(){
         return direcaoDaCobra;
@@ -213,8 +249,31 @@ public class PainelDoJogo extends JPanel implements ActionListener {
         return jogoAtivo;
     }
 
+    public int obterNumLinhas(){
+        return numLinhas;
+    }
+
+    public int obterNumColunas(){
+        return numColunas;
+    }
+
+    public int obterTamanhoDaCelula(){
+        return tamanhoCelula;
+    }
+
     public void ajustarDirecao(char direcaoDaCobra){
         this.direcaoDaCobra = direcaoDaCobra;
+    }
+
+    public void modificarModoIA(boolean modoIA) {
+        this.modoIA = modoIA;
+    }
+
+    public void ativarIA() {
+        if (cobra != null && comida != null) {
+            ia = new Ia(cobra.getFirst(), new Point(comida.x, comida.y), this, cobra);
+            modoIA = true;
+        }
     }
 
 }

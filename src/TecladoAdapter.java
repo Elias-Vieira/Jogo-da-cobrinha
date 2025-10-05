@@ -1,13 +1,15 @@
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class TecladoAdapter extends KeyAdapter {
 
-
     private PainelDoJogo painelDoJogo;
 
     public TecladoAdapter(PainelDoJogo painelDoJogo){
         this.painelDoJogo = painelDoJogo;
+
     }
 
     @Override
@@ -35,6 +37,10 @@ public class TecladoAdapter extends KeyAdapter {
             case KeyEvent.VK_ENTER:
                 if (!painelDoJogo.obterJogoAtivo()) painelDoJogo.iniciarJogo();
                 break;
+            case KeyEvent.VK_SPACE:
+                painelDoJogo.ativarIA();
+                break;
+
         }
 
     }
