@@ -276,4 +276,9 @@ public class PainelDoJogo extends JPanel implements ActionListener {
         }
     }
 
+    public void desativarIA() {
+        ia = null;
+        modoIA = false;
+    }
+
 }

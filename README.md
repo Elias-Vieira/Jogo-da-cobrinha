@@ -8,6 +8,10 @@
 
 <p align="center"><i>Um clássico reinventado com inteligência artificial, cores dinâmicas e dificuldade progressiva.</i></p>
 
+<p align="center">
+  <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTY1cXRtdmc3bzVtazdyMjk1aHFwbTg5Y2VuZHJ3Mmk2NzhjeWc5OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Y4miq8PexTVRbi5Kxy/giphy.gif"/>
+</p>
+
 ---
 
 ## ✨ Visão Geral
@@ -51,19 +55,14 @@ Essa versão moderna do clássico Snake inclui **comidas coloridas aleatórias**
 
 ---
 
-## 🕹️ Como Jogar
+## ▶️ Como Executar
 
-```text
-🎮 Controles:
-  ⬆️  Seta para cima     — mover para cima
-  ⬇️  Seta para baixo    — mover para baixo
-  ⬅️  Seta para esquerda — mover para esquerda
-  ➡️  Seta para direita  — mover para direita
-  ␣   Espaço             — ativar/desativar modo IA
+1. **Pré-requisitos**
+    - **JDK 8+** instalado
+    - Editor/IDE recomendado: **IntelliJ IDEA** ou **Eclipse**
 
-🎯 Objetivo:
-Coma o máximo de comidas coloridas possível para crescer e aumentar a pontuação.
+2. **Clonar o Repositório**
+   ```bash
+   git clone https://github.com/Elias-Vieira/Jogo-da-cobrinha.git
 
-⚠️ Desafio:
-A cada 5 comidas, a cobra fica mais rápida — e qualquer colisão com as bordas ou o próprio corpo encerra o jogo!
-
+Aproveite o jogo e divirta-se! 🐍✨

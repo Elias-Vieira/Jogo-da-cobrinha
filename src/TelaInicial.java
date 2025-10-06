@@ -26,12 +26,12 @@ public class TelaInicial extends JPanel {
         titulo.setFont(new Font("Comic Sans MS", Font.BOLD, 40));
         titulo.setForeground(Color.RED);
 
-        JLabel subtitulo = new JLabel("COM MINHA COBRA?");
-        subtitulo.setFont(new Font("Comic Sans MS", Font.BOLD, 20));
+        JLabel subtitulo = new JLabel("COM A MINHA COBRA?");
+        subtitulo.setFont(new Font("Comic Sans MS", Font.BOLD, 30));
         subtitulo.setForeground(Color.WHITE);
 
         Color cinzaEscuro = new Color(50, 50, 50);
-        Dimension tamanhoBotao = new Dimension(250, 40);
+        Dimension tamanhoBotao = new Dimension(250, 50);
 
         JButton botaoJogar = new JButton("Jogar Sozinho");
         JButton botaoJogarComIa = new JButton("Jogar Com IA");
@@ -58,6 +58,7 @@ public class TelaInicial extends JPanel {
         botao.setFont(new Font("Comic Sans MS", Font.BOLD, 16));
 
     }
+
 }
 
 
